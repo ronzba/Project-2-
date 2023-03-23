@@ -1,25 +1,15 @@
+#ifndef ROUTE-RECORDS_H
+#define ROUTE-RECORDS_H
+#define MAX_LEN 4
+#define MAX_FLIGHTS 7439
 
+typedef struct RouteRecord{
+	char origin[MAX_LEN];
+	char destination[MAX_LEN];
+	char airline[MAX_LEN -1];
+	int passengersCount[6];
+} RouteRecord;
 
-// This function creates the array of RouteRecord's and initializes it. The function takes in a file pointer
-RouteRecord* createRecords(FILE* fileIn){
-	
-	// open file
-	FILE *file = fopen("data.csv", "r");
-	if (file == NULL) {
-		printf("ERROR FILE DID NOT OPEN\n");
-		return 1;
-	}
-	
-	// Allocate Memory for array
-	RouteRecord *routeRecord = malloc(sizeof(RouteRecord) * MAX_FLIGHTS);
-	
-	// Initialize each array value to 0
-	struct RouteRecord RouteRecordStruct;
-	int i;
-	for (i = 0; i < 6; i++) {
-		myStruct.passengerCount[1] = 0;
-	}
-	
-	// Rewind File
-	rewind(file);
-}
+typedef enum SearchType { ROUTE, ORIGIN, DESTINATION, AIRLINE } SearchType;
+
+#endif
