@@ -153,3 +153,22 @@ void printMenu()
 	printf( "Enter your selection: " );
 }
 
+int countUniqueRoutes(RouteRecord* records, int count) {
+    int uniqueCount = 0;
+    int i;
+    for (i = 0; i < count; i++) {
+        int j;
+        for (j = 0; j < i; j++) {
+            if (strcmp(records[i].origin, records[j].origin) == 0 &&
+                strcmp(records[i].destination, records[j].destination) == 0) {
+                break;  // found a duplicate
+            }
+        }
+        if (j == i) {  // no duplicates found
+            uniqueCount++;
+        }
+    }
+    return uniqueCount;
+}
+
+
