@@ -37,51 +37,71 @@ RouteRecord* createRecords(FILE* fp) {
 
 int fillRecords(RouteRecord* records, FILE* fp){
     char line[100];
-    int count = 0;
+    int count = 0; // initialize count to 0
+    int index = 0; // initialize index to 0
 
     // Process each line
     while (fgets(line, 100, fp)){
         if (count != 0){
-            sscanf(line, "%*d, %3[^,], %3[^,], %2[^,], %*[^,], %d, %d, %d, %d, %d, %d, %d", records->origin, records->destination, records->airline,
-           		&records->passengerCount[0], &records->passengerCount[1],
-				&records->passengerCount[2], &records->passengerCount[3],
-           		&records->passengerCount[4], &records->passengerCount[5]);
+            sscanf(line, "%*d, %3[^,], %3[^,], %2[^,], %*[^,], %d, %d, %d, %d, %d, %d, %d", records[index].origin, records[index].destination, records[index].airline,
+                &records[index].passengerCount[0], &records[index].passengerCount[1],
+                &records[index].passengerCount[2], &records[index].passengerCount[3],
+                &records[index].passengerCount[4], &records[index].passengerCount[5]);
         }
         // Find existing record with same origin, destination, and airline
-        int idx = findAirlineRoute(records, count, records->origin, records->destination, records->airline, 0);
+        int idx = findAirlineRoute(records, index, records[index].origin, records[index].destination, records[index].airline, 0);
         if (idx != -1) { // update existing record
-            int i;
-            for (i = 0; i < 6; i++) {
-                records[idx].passengerCount[i] += records->passengerCount[i];
-            }
+            
+       		int i,j;
+   			for (i = 0; i < count; i++) {
+      			 for (j = 0; j < 6; j++) {
+           		records[i].passengerCount[j] = records.passengerCount[i];
+       			 }
+       		}
         } else { // add new record
-            strncpy(records[count].origin, records->origin, 3);
-            strncpy(records[count].destination, records->destination, 3);
-            strncpy(records[count].airline, records->airline, 2);
-            int i;
-            for (i = 0; i < 6; i++) {
-                records[count].passengerCount[i] = records->passengerCount[i];
-            }
+            strncpy(records[index].origin, records[index].origin, 3);
+            strncpy(records[index].destination, records[index].destination, 3);
+            strncpy(records[index].airline, records[index].airline, 2);
             count++;
         }
+        index++; // increment the index for the next record
     }
     // Return actual number of records used in array
     return count;
 }
 
 
-int findAirlineRoute(RouteRecord* records, int length, const char* origin, const char* destination, const char* airline, int curIdx){
-	if (curIdx >= length){ // basecase
-		return -1;
-	}
-	if (strncmp(records[curIdx].origin, origin, 3) == 0 && strncmp(records[curIdx].destination, destination, 3)== 0 && strncmp(records[curIdx].airline, airline,2) == 0)
-	{
-		return curIdx;
-	}
-	
-	// Recursive Case
-	return findAirlineRoute(records, length, origin, destination, airline, curIdx + 1);
+int findAirlineRoute(RouteRecord* r, int length, const char* origin, const char* destination, const char* airline, int curIdx){
+    // base case: if current index is greater than or equal to length, return -1
+    if (curIdx >= length) {
+        return -1;
+    }
+    // check if current record matches the given origin, destination, and airline
+    if (strncmp(r[curIdx].origin, origin, 3) == 0 && strncmp(r[curIdx].destination, destination, 3) == 0 && strncmp(r[curIdx].airline, airline, 2) == 0) {
+        return curIdx; // return current index if there is a match
+    }
+    // recursive case: search the remaining records
+    return findAirlineRoute(r, length, origin, destination, airline, curIdx + 1);
 }
+
+
+
+
+	// Print records FOR DEBUGGGING
+	void printRecords(RouteRecord* records, int length){
+    int i, j;
+    for (i = 0; i < 10; i++){
+        printf("Record %d:\n", i+1);
+        printf("\tOrigin: %s\n", records[i].origin);
+        printf("\tDestination: %s\n", records[i].destination);
+        printf("\tAirline: %s\n", records[i].airline);
+        printf("\tPassenger Count:\n");
+        for (j = 0; j < 6; j++){
+            printf("\t\Month %d: %d\n", j+1, records[i].passengerCount[j]);
+        }
+    }
+}
+
 
 void printMenu()
 {
