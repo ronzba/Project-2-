@@ -38,8 +38,14 @@ int main(int argc, char *argv[]) {
     records = createRecords(fp);
     
     /* 5.2 Call fillRecords() to go through the CSV file again to fill in the values. It will then return the actual number of items the array has. Recall that not all records in the original CSV file will be entered into the array. Print the number of unique routes operated by different airlines: Unique routes operated by airlines: ??? */
-	actualRoutes = fillRecords(records, fp);
-	printf("Unique Routes opereted by Airlines: %d", actualRoutes);
+	//actualRoutes = fillRecords(records, fp);
+	//printf("Unique Routes opereted by Airlines: %d", actualRoutes);
+	
+//	RouteRecord records[numRecords];
+	int recordCount;
+	recordCount = fillRecords(records, fp);
+	printRecords(records, recordCount);
+
     
     /* 5.3 Close the the file. */
     fclose(fp);
@@ -50,7 +56,7 @@ int main(int argc, char *argv[]) {
         printMenu();
         
         /* 6.2 Ask the user to input a value for the menu */
-        printf("Enter a menu option: ");
+        
         if (scanf("%d", &choice) != 1) { /* 6.3 Handle the case in which a non-integer value is entered */
             printf("Invalid input\n");
             while (getchar() != '\n'); /* clear input buffer */
