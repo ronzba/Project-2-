@@ -21,53 +21,52 @@ RouteRecord* createRecords(FILE* fp) {
     // Allocate memory for array of RouteRecord structs
     RouteRecord* records = malloc(count * sizeof(RouteRecord));
     
-    // Initialize passenger count to 0 for each month
-   int i,j;
-    
-    for (i = 0; i < count; i++) {
-       for (j = 0; j < 6; j++) {
-           records[i].passengerCount[j] = 0;
-        }
-    }
     // Rewind file pointer
    rewind(fp);
     // Return pointer to array of RouteRecord structs
     return records;
 }
 
-int fillRecords(RouteRecord* records, FILE* fp){
-    char line[100];
-    int count = 0; // initialize count to 0
-    int index = 0; // initialize index to 0
+int fillRecords(RouteRecord* r, FILE* fileIn){
+   char buffer[LENGTH];
+   int routeCount = 0;
+   int i;
+   int passengers[MONTHS] = {0, 0, 0, 0, 0, 0};
 
-    // Process each line
-    while (fgets(line, 100, fp)){
-        if (count != 0){
-            sscanf(line, "%*d, %3[^,], %3[^,], %2[^,], %*[^,], %d, %d, %d, %d, %d, %d, %d", records[index].origin, records[index].destination, records[index].airline,
-                &records[index].passengerCount[0], &records[index].passengerCount[1],
-                &records[index].passengerCount[2], &records[index].passengerCount[3],
-                &records[index].passengerCount[4], &records[index].passengerCount[5]);
-        }
-        // Find existing record with same origin, destination, and airline
-        int idx = findAirlineRoute(records, index, records[index].origin, records[index].destination, records[index].airline, 0);
-        if (idx != -1) { // update existing record
-            
-       		int i,j;
-   			for (i = 0; i < count; i++) {
-      			 for (j = 0; j < 6; j++) {
-           		records[i].passengerCount[j] = records.passengerCount[i];
-       			 }
-       		}
-        } else { // add new record
-            strncpy(records[index].origin, records[index].origin, 3);
-            strncpy(records[index].destination, records[index].destination, 3);
-            strncpy(records[index].airline, records[index].airline, 2);
-            count++;
-        }
-        index++; // increment the index for the next record
-    }
-    // Return actual number of records used in array
-    return count;
+   fgets(buffer, LENGTH, fileIn);
+
+   while(fgets(buffer, LENGTH, fileIn) != NULL){
+      int month;
+      char airline[3];
+      char origin[4];
+      char destination[4];
+      char dummy[10];
+      int passNum;
+
+      sscanf(buffer, "%d,%[^,],%[^,],%[^,],%[^,],%d", &month, origin, destination, airline, dummy, &passNum);
+      passengers[month - 1] += passNum;
+
+      int routeIdx = findAirlineRoute(r, routeCount, origin, destination, airline, 0);
+
+      if(routeIdx >= 0){
+         for (i = 0; i < MONTHS; i++){
+            r[routeIdx].passengerCount[i] += passengers[i];
+         }
+         }
+
+      else{
+         strcpy(r[routeCount].origin, origin);
+         strcpy(r[routeCount].destination, destination);
+         strcpy(r[routeCount].airline, airline);
+
+         for (i = 0; i < MONTHS; i++){
+            r[routeCount].passengerCount;
+            }
+
+      routeCount += 1;
+      }
+   }
+   return routeCount;
 }
 
 
